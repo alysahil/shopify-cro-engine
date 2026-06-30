@@ -1,0 +1,9 @@
+# Logs
+*.log
+_extracted.js
+_patch.js
+_ro_patch.txt
+
+# OS metadata
+.DS_Store
+Thumbs.db

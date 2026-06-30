@@ -1,0 +1,1099 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRO Engine — Shopify Conversion Audit</title>
+<meta name="description" content="Enter any Shopify store URL for a live CRO audit with ICE-scored opportunities, PageSpeed data, tech stack analysis, and A/B experiment briefs.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090B;--bg1:#0F0F12;--bg2:#141418;--bg3:#1C1C21;
+  --glass:rgba(255,255,255,0.03);--glass2:rgba(255,255,255,0.055);--glass3:rgba(255,255,255,0.08);
+  --bord:rgba(255,255,255,0.08);--bord2:rgba(255,255,255,0.13);--bord3:rgba(255,255,255,0.2);
+  --txt:#FAFAFA;--txt2:#A1A1AA;--muted:#52525B;
+  --accent:#7C3AED;--accent2:#5B7CF6;
+  --green:#22C55E;--yellow:#EAB308;--orange:#F97316;--red:#EF4444;--blue:#3B82F6;--purple:#8B5CF6;--cyan:#06B6D4;
+  --grad:linear-gradient(135deg,#7C3AED 0%,#5B7CF6 100%);
+  --grad-warm:linear-gradient(135deg,#C026D3 0%,#7C3AED 50%,#5B7CF6 100%);
+  --shadow-sm:0 1px 2px rgba(0,0,0,0.4);
+  --shadow:0 0 0 1px rgba(255,255,255,0.05),0 4px 24px rgba(0,0,0,0.5);
+  --shadow-lg:0 0 0 1px rgba(255,255,255,0.06),0 8px 48px rgba(0,0,0,0.6);
+  --shadow-glow:0 0 0 1px rgba(124,58,237,0.25),0 8px 40px rgba(124,58,237,0.15),0 0 80px rgba(91,124,246,0.06);
+  --r-sm:8px;--r:12px;--r-lg:16px;--r-xl:20px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;font-size:16px;}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  min-height:100vh;overflow-x:hidden;line-height:1.6;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+}
+/* Mesh gradient */
+.mesh{
+  position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;
+}
+.mesh::before{
+  content:'';position:absolute;
+  width:800px;height:600px;top:-200px;left:-200px;
+  background:radial-gradient(ellipse,rgba(124,58,237,0.1) 0%,transparent 65%);
+  transform:rotate(-15deg);
+}
+.mesh::after{
+  content:'';position:absolute;
+  width:700px;height:500px;top:-100px;right:-150px;
+  background:radial-gradient(ellipse,rgba(91,124,246,0.07) 0%,transparent 65%);
+}
+.mesh-bottom{
+  position:fixed;bottom:-100px;left:50%;transform:translateX(-50%);
+  width:900px;height:400px;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse,rgba(6,182,212,0.04) 0%,transparent 65%);
+}
+/* Grid pattern */
+.grid-bg{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(255,255,255,0.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.015) 1px,transparent 1px);
+  background-size:64px 64px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 0%,transparent 100%);
+}
+.rel{position:relative;z-index:1;}
+
+/* ─── Header ─── */
+header{
+  border-bottom:1px solid var(--bord);
+  padding:14px 0;position:sticky;top:0;z-index:100;
+  background:rgba(9,9,11,0.75);
+  backdrop-filter:blur(24px) saturate(200%);
+  -webkit-backdrop-filter:blur(24px) saturate(200%);
+}
+.hdr{display:flex;align-items:center;justify-content:space-between;}
+.logo{display:flex;align-items:center;gap:9px;font-size:.92rem;font-weight:700;color:var(--txt);text-decoration:none;letter-spacing:-.025em;}
+.logo-icon{
+  width:28px;height:28px;background:var(--grad);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  box-shadow:0 2px 10px rgba(124,58,237,0.45);
+}
+.hbadge{
+  background:rgba(124,58,237,0.12);border:1px solid rgba(124,58,237,0.22);
+  color:#A78BFA;padding:4px 10px;border-radius:100px;
+  font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+}
+
+/* ─── Hero ─── */
+.hero{padding:80px 0 56px;text-align:center;position:relative;z-index:1;}
+.hero-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);
+  padding:6px 14px;border-radius:100px;
+  font-size:.72rem;font-weight:500;color:var(--txt2);
+  margin-bottom:28px;letter-spacing:.01em;
+}
+.pulse-dot{
+  width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 8px var(--green),0 0 20px rgba(34,197,94,0.4);
+  animation:pulse 2.5s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.55;transform:scale(.75);}}
+h1{
+  font-size:clamp(2.2rem,6vw,4rem);font-weight:900;line-height:1.05;
+  letter-spacing:-.045em;margin-bottom:18px;
+  background:linear-gradient(160deg,#FFFFFF 0%,rgba(255,255,255,0.55) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+h1 .gr{
+  background:var(--grad-warm);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-sub{color:var(--txt2);font-size:1rem;max-width:480px;margin:0 auto 44px;font-weight:400;line-height:1.75;}
+
+/* ─── macOS Window Card ─── */
+.mac-window{
+  max-width:780px;margin:0 auto;
+  background:rgba(255,255,255,0.028);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:var(--r-xl);overflow:hidden;
+  box-shadow:var(--shadow-lg);
+  backdrop-filter:blur(32px) saturate(180%);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);
+  transition:box-shadow .35s ease;
+}
+.mac-window:hover{box-shadow:var(--shadow-glow);}
+.titlebar{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 16px;
+  border-bottom:1px solid var(--bord);
+  background:rgba(255,255,255,0.018);
+}
+.dot-r{width:11px;height:11px;border-radius:50%;background:#FF5F57;box-shadow:0 0 6px rgba(255,95,87,0.5);}
+.dot-y{width:11px;height:11px;border-radius:50%;background:#FFBD2E;box-shadow:0 0 6px rgba(255,189,46,0.4);}
+.dot-g{width:11px;height:11px;border-radius:50%;background:#27C840;box-shadow:0 0 6px rgba(39,200,64,0.4);}
+.win-title{
+  flex:1;text-align:center;
+  font-size:.7rem;font-weight:500;color:var(--muted);
+  font-family:'JetBrains Mono',monospace;letter-spacing:.01em;
+}
+.win-body{padding:24px;}
+
+/* ─── Form ─── */
+.fgrid{display:grid;grid-template-columns:1fr 240px;gap:12px;margin-bottom:14px;}
+@media(max-width:580px){.fgrid{grid-template-columns:1fr;}}
+.fld{display:flex;flex-direction:column;gap:5px;}
+.flbl{font-size:.67rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;}
+.ibox{
+  display:flex;align-items:center;gap:9px;
+  background:rgba(0,0,0,0.25);
+  border:1px solid var(--bord);border-radius:var(--r-sm);
+  padding:10px 13px;
+  transition:border-color .2s,box-shadow .2s,background .2s;
+}
+.ibox:focus-within{
+  border-color:rgba(124,58,237,0.5);
+  box-shadow:0 0 0 3px rgba(124,58,237,0.1);
+  background:rgba(0,0,0,0.35);
+}
+.ibox input,.ibox select{
+  background:none;border:none;outline:none;
+  color:var(--txt);font-family:inherit;font-size:.875rem;width:100%;
+}
+.ibox input::placeholder{color:var(--muted);}
+.ibox select option{background:#18181B;}
+.ibox .ico{color:var(--muted);font-size:13px;flex-shrink:0;}
+.fhint{font-size:.68rem;color:var(--muted);}
+
+/* Toggle */
+.tog-row{display:flex;align-items:center;gap:9px;margin-bottom:14px;cursor:pointer;width:fit-content;user-select:none;}
+.sw{
+  width:34px;height:19px;background:var(--bg3);
+  border:1px solid var(--bord);border-radius:10px;
+  position:relative;transition:background .2s,border-color .2s;flex-shrink:0;
+}
+.sw.on{background:#7C3AED;border-color:#7C3AED;}
+.sw::after{
+  content:'';position:absolute;
+  width:13px;height:13px;background:white;border-radius:50%;
+  top:2px;left:2px;transition:transform .2s;
+  box-shadow:0 1px 4px rgba(0,0,0,0.4);
+}
+.sw.on::after{transform:translateX(15px);}
+.tog-lbl{font-size:.82rem;color:var(--txt2);font-weight:500;}
+.csec{display:none;margin-bottom:14px;}
+.csec.vis{display:block;}
+
+/* Run button */
+.run{
+  width:100%;padding:13px;
+  background:var(--grad);border:none;border-radius:var(--r-sm);
+  color:white;font-family:inherit;font-size:.9rem;font-weight:700;
+  cursor:pointer;letter-spacing:-.01em;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:opacity .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 4px 20px rgba(124,58,237,0.35),inset 0 1px 0 rgba(255,255,255,0.15);
+  position:relative;overflow:hidden;
+}
+.run::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(255,255,255,0.1) 0%,transparent 100%);}
+.run:hover:not(:disabled){opacity:.92;box-shadow:0 8px 32px rgba(124,58,237,0.5),inset 0 1px 0 rgba(255,255,255,0.15);transform:translateY(-1px);}
+.run:active:not(:disabled){transform:scale(.99);}
+.run:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
+
+/* Error */
+.errbox{
+  background:rgba(239,68,68,0.07);border:1px solid rgba(239,68,68,0.2);
+  border-radius:var(--r-sm);padding:11px 14px;
+  color:#FCA5A5;font-size:.8rem;display:none;
+  margin-top:10px;gap:8px;align-items:flex-start;
+}
+.errbox.vis{display:flex;}
+
+/* Progress */
+.prog-wrap{max-width:780px;margin:28px auto 0;display:none;}
+.prog-wrap.vis{display:block;}
+.prog-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.prog-lbl{font-size:.77rem;color:var(--txt2);font-weight:500;}
+.prog-pct{font-size:.77rem;color:var(--txt2);font-family:'JetBrains Mono',monospace;}
+.prog-track{height:2px;background:rgba(255,255,255,0.06);border-radius:1px;overflow:hidden;margin-bottom:14px;}
+.prog-fill{height:100%;width:0%;background:var(--grad);border-radius:1px;transition:width .4s ease;box-shadow:0 0 12px rgba(124,58,237,0.6);}
+.logbox{
+  background:rgba(0,0,0,0.4);border:1px solid var(--bord);border-radius:var(--r-sm);
+  padding:12px 14px;max-height:150px;overflow-y:auto;
+  font-family:'JetBrains Mono',monospace;font-size:.7rem;line-height:1.75;
+}
+.logbox::-webkit-scrollbar{width:3px;}
+.logbox::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:2px;}
+.ll{color:var(--txt2);}
+.ll.ok{color:var(--green);}
+.ll.info{color:#818CF8;}
+.ll.warn{color:var(--yellow);}
+.ll.err{color:var(--red);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.spin{display:inline-block;animation:spin .8s linear infinite;}
+
+/* ─── Results ─── */
+#results{
+  max-width:1240px;margin:48px auto 96px;padding:0 24px;
+  opacity:0;transform:translateY(20px);
+  transition:opacity .5s ease,transform .5s ease;
+}
+#results.vis{opacity:1;transform:none;}
+.container{max-width:1240px;margin:0 auto;padding:0 24px;}
+.sec{margin-bottom:48px;}
+.sechdr{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:18px;gap:12px;flex-wrap:wrap;
+}
+.sectitle{font-size:1rem;font-weight:700;color:var(--txt);letter-spacing:-.025em;}
+.secsub{font-size:.75rem;color:var(--muted);font-weight:400;}
+.sep{height:1px;background:var(--bord);margin:40px 0;}
+
+/* Store header */
+.store-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+#ovurl{font-size:.78rem;color:var(--txt2);font-family:'JetBrains Mono',monospace;}
+.export-btn{
+  margin-left:auto;display:inline-flex;align-items:center;gap:6px;
+  background:var(--glass);border:1px solid var(--bord);
+  color:var(--txt2);font-family:inherit;font-size:.73rem;font-weight:600;
+  padding:6px 12px;border-radius:var(--r-sm);cursor:pointer;
+  transition:all .15s;letter-spacing:.01em;
+}
+.export-btn:hover{background:var(--glass2);color:var(--txt);border-color:var(--bord2);}
+
+/* Metrics */
+.mgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;}
+.mcard{
+  background:var(--glass);border:1px solid var(--bord);border-radius:var(--r);
+  padding:16px 18px;cursor:default;
+  transition:background .2s,border-color .2s,transform .2s;
+  opacity:0;transform:translateY(10px);
+}
+.mcard.fin{opacity:1;transform:none;}
+.mcard:hover{background:var(--glass2);border-color:var(--bord2);transform:translateY(-2px);}
+.mlbl{font-size:.65rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
+.mval{font-size:1.55rem;font-weight:800;color:var(--txt);letter-spacing:-.035em;line-height:1;margin-bottom:5px;}
+.msub{font-size:.68rem;color:var(--muted);}
+
+/* Health bars */
+.hgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:9px;}
+.hbi{
+  background:var(--glass);border:1px solid var(--bord);border-radius:var(--r-sm);
+  padding:13px 15px;
+  opacity:0;transform:translateX(-6px);
+  transition:opacity .3s,transform .3s,background .2s;
+}
+.hbi.fin{opacity:1;transform:none;}
+.hbi:hover{background:var(--glass2);}
+.hbihdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.hbname{font-size:.75rem;font-weight:600;color:var(--txt2);}
+.hbscore{font-size:.78rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.hbtrack{height:2px;background:rgba(255,255,255,0.06);border-radius:1px;overflow:hidden;margin-bottom:5px;}
+.hbfill{height:100%;border-radius:1px;transition:width .9s cubic-bezier(.22,1,.36,1);}
+.hbbm{font-size:.62rem;color:var(--muted);}
+
+/* Charts */
+.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px;}
+.ccrd{
+  background:var(--glass);border:1px solid var(--bord);border-radius:var(--r);
+  padding:18px;transition:border-color .2s;
+}
+.ccrd:hover{border-color:var(--bord2);}
+.ctitle{font-size:.67rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px;}
+.ccanv{position:relative;height:150px;}
+
+/* Filter bar */
+.fbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.fbtn{
+  padding:5px 12px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--bord);
+  border-radius:100px;color:var(--txt2);font-family:inherit;
+  font-size:.72rem;font-weight:500;cursor:pointer;
+  transition:all .15s;
+}
+.fbtn:hover{background:var(--glass2);color:var(--txt);}
+.fbtn.on{background:rgba(124,58,237,0.15);border-color:rgba(124,58,237,0.4);color:#A78BFA;font-weight:700;}
+.srch{
+  margin-left:auto;background:rgba(0,0,0,0.25);
+  border:1px solid var(--bord);border-radius:var(--r-sm);
+  padding:6px 11px;color:var(--txt);font-family:inherit;
+  font-size:.78rem;outline:none;min-width:160px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.srch:focus{border-color:rgba(124,58,237,0.4);box-shadow:0 0 0 3px rgba(124,58,237,0.08);}
+.srch::placeholder{color:var(--muted);}
+
+/* Table */
+.twrap{background:var(--glass);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden;}
+.otbl{width:100%;border-collapse:collapse;font-size:.8rem;}
+.otbl thead th{
+  padding:10px 13px;text-align:left;
+  font-size:.65rem;font-weight:700;color:var(--muted);
+  text-transform:uppercase;letter-spacing:.08em;
+  border-bottom:1px solid var(--bord);
+  cursor:pointer;user-select:none;
+  background:rgba(255,255,255,0.015);
+  transition:color .15s;white-space:nowrap;
+}
+.otbl thead th:hover{color:var(--txt2);}
+.otbl tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background .12s;cursor:pointer;}
+.otbl tbody tr:last-child{border-bottom:none;}
+.otbl tbody tr:hover{background:rgba(255,255,255,0.03);}
+.otbl tbody td{padding:11px 13px;vertical-align:middle;}
+.rank{
+  width:24px;height:24px;background:rgba(255,255,255,0.05);
+  border:1px solid var(--bord);border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.68rem;font-weight:700;color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+}
+.otitle{font-weight:600;color:var(--txt);font-size:.8rem;line-height:1.35;}
+.atag{
+  display:inline-flex;align-items:center;gap:3px;
+  padding:2px 8px;border-radius:100px;
+  font-size:.65rem;font-weight:700;text-transform:capitalize;
+}
+.ipill{font-size:.82rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.icescore{font-size:.88rem;font-weight:800;font-family:'JetBrains Mono',monospace;}
+.echips{display:flex;flex-wrap:wrap;gap:3px;}
+.echip{
+  background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);
+  color:var(--muted);padding:2px 6px;border-radius:4px;
+  font-size:.62rem;white-space:nowrap;
+}
+@media(max-width:768px){.hm{display:none;}}
+
+/* Briefs */
+.bgrid{display:flex;flex-direction:column;gap:10px;}
+.bcard{
+  background:var(--glass);border:1px solid var(--bord);border-radius:var(--r);
+  overflow:hidden;transition:border-color .2s;
+}
+.bcard.op{border-color:rgba(124,58,237,0.3);}
+.bhdr{
+  display:flex;align-items:flex-start;gap:13px;
+  padding:16px 18px;cursor:pointer;transition:background .15s;
+}
+.bhdr:hover{background:rgba(255,255,255,0.02);}
+.bnum{
+  width:26px;height:26px;flex-shrink:0;
+  background:var(--grad);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:.72rem;font-weight:800;color:white;
+}
+.bmeta{flex:1;}
+.btitle{font-weight:700;font-size:.85rem;color:var(--txt);margin-bottom:3px;letter-spacing:-.015em;}
+.bhyp{font-size:.73rem;color:var(--txt2);line-height:1.55;margin-bottom:8px;}
+.btags{display:flex;align-items:center;gap:5px;flex-wrap:wrap;}
+.bchev{font-size:1.1rem;color:var(--muted);transition:transform .2s;flex-shrink:0;margin-top:3px;}
+.bcard.op .bchev{transform:rotate(180deg);}
+.bbody{display:none;padding:0 18px 18px;border-top:1px solid var(--bord);}
+.bcard.op .bbody{display:block;}
+.bslbl{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin:15px 0 7px;}
+.bscont{font-size:.8rem;color:var(--txt2);line-height:1.7;}
+.bscont ul{padding-left:15px;}.bscont li{margin-bottom:3px;}
+.bscont strong{color:var(--txt);}
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.vcard{padding:11px 13px;border-radius:var(--r-sm);font-size:.76rem;}
+.vcard.ctrl{background:rgba(255,255,255,0.025);border:1px solid var(--bord);}
+.vcard.trt{background:rgba(124,58,237,0.08);border:1px solid rgba(124,58,237,0.25);}
+.vlbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:5px;}
+.vlbl.ctrl{color:var(--muted);}
+.vlbl.trt{color:#A78BFA;}
+.vdesc{color:var(--txt2);line-height:1.5;font-size:.76rem;}
+
+/* Evidence modal */
+.emodal{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(0,0,0,0.65);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .2s;
+}
+.emodal.op{opacity:1;pointer-events:all;}
+.epanel{
+  background:#18181B;border:1px solid rgba(255,255,255,0.12);border-radius:var(--r-lg);
+  width:90%;max-width:500px;max-height:80vh;
+  display:flex;flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,0.7),0 0 0 1px rgba(255,255,255,0.04);
+}
+.ephdr{display:flex;align-items:center;justify-content:space-between;padding:15px 19px;border-bottom:1px solid var(--bord);}
+.eptitle{font-size:.88rem;font-weight:700;color:var(--txt);letter-spacing:-.015em;}
+.closebtn{
+  background:rgba(255,255,255,0.06);border:1px solid var(--bord);
+  color:var(--txt2);cursor:pointer;width:26px;height:26px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;font-size:.78rem;
+  transition:all .15s;
+}
+.closebtn:hover{background:rgba(255,255,255,0.1);color:var(--txt);}
+.elist{overflow-y:auto;padding:14px 19px;flex:1;}
+.elist::-webkit-scrollbar{width:3px;}
+.elist::-webkit-scrollbar-thumb{background:var(--bord2);border-radius:2px;}
+.eitem{margin-bottom:13px;}
+.eitmtitle{font-size:.65rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:4px;}
+.eitmdata{font-size:.8rem;color:var(--txt2);line-height:1.6;}
+
+/* Comparison */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;}
+@media(max-width:600px){.comp-grid{grid-template-columns:1fr;}}
+.cshdr{display:flex;align-items:center;gap:9px;padding:14px 18px;border-bottom:1px solid var(--bord);}
+.csdot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.csname{font-size:.82rem;font-weight:700;color:var(--txt);}
+.csurl{font-size:.68rem;color:var(--muted);font-family:'JetBrains Mono',monospace;}
+.dtbl{width:100%;border-collapse:collapse;}
+.dtbl tr{border-bottom:1px solid rgba(255,255,255,0.04);}
+.dtbl tr:last-child{border-bottom:none;}
+.dmet{padding:9px 18px;font-size:.76rem;color:var(--txt2);}
+.dval{padding:9px 18px;font-size:.76rem;font-weight:700;color:var(--txt);font-family:'JetBrains Mono',monospace;text-align:right;}
+.dbadge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:100px;font-size:.62rem;font-weight:700;}
+.dbadge.better{background:rgba(34,197,94,0.1);color:var(--green);}
+.dbadge.worse{background:rgba(239,68,68,0.1);color:var(--red);}
+.dbadge.neut{background:rgba(255,255,255,0.05);color:var(--muted);}
+
+/* Custom scrollbar */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.18);}
+
+/* Fade in animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:none;}}
+.fin{animation:fadeUp .35s ease forwards;}
+</style>
+</head>
+<body>
+<div class="mesh"></div>
+<div class="mesh-bottom"></div>
+<div class="grid-bg"></div>
+
+<header>
+<div class="container rel">
+  <div class="hdr">
+    <a class="logo" href="#"><div class="logo-icon">⚡</div>CRO Engine</a>
+    <span class="hbadge">Shopify Audit Tool</span>
+  </div>
+</div>
+</header>
+
+<section class="hero rel">
+<div class="container">
+  <div class="hero-pill"><span class="pulse-dot"></span>Live data · Real-time CRO intelligence</div>
+  <h1>Turn your Shopify store<br>into a <span class="gr">revenue machine</span></h1>
+  <p class="hero-sub">Enter any public Shopify URL to get a prioritized audit with ICE-scored opportunities, live PageSpeed data, tech stack detection, and A/B experiment briefs.</p>
+
+  <div class="mac-window">
+    <div class="titlebar">
+      <div class="dot-r"></div><div class="dot-y"></div><div class="dot-g"></div>
+      <div class="win-title">shopify-cro-engine · new audit</div>
+    </div>
+    <div class="win-body">
+      <div class="fgrid">
+        <div class="fld">
+          <div class="flbl">Target Store URL</div>
+          <div class="ibox">
+            <span class="ico">🔗</span>
+            <input type="text" id="primaryUrl" placeholder="gymshark.com · allbirds.com · wforwoman.com" autocomplete="off" spellcheck="false">
+          </div>
+          <span class="fhint">Works with any live Shopify storefront</span>
+        </div>
+        <div class="fld">
+          <div class="flbl">Audit Depth</div>
+          <div class="ibox">
+            <span class="ico">📊</span>
+            <select id="auditDepth">
+              <option value="50">Quick (50 SKUs)</option>
+              <option value="100">Standard (100 SKUs)</option>
+              <option value="250" selected>Deep (250 SKUs)</option>
+              <option value="500">Full (500 SKUs)</option>
+            </select>
+          </div>
+          <span class="fhint">More products = richer insights</span>
+        </div>
+      </div>
+
+      <div class="tog-row" id="ct">
+        <div class="sw" id="sw"></div>
+        <span class="tog-lbl">⚔️ Compare against a competitor</span>
+      </div>
+
+      <div class="csec" id="cs">
+        <div class="fld">
+          <div class="flbl">Competitor URL</div>
+          <div class="ibox">
+            <span class="ico">🎯</span>
+            <input type="text" id="compUrl" placeholder="competitor.com" autocomplete="off" spellcheck="false">
+          </div>
+        </div>
+      </div>
+
+      <button class="run" id="runBtn" onclick="go()">
+        <span id="bi">⚡</span><span id="bt">Run CRO Audit</span>
+      </button>
+
+      <div class="errbox" id="eb"><span>⚠️</span><span id="em"></span></div>
+    </div>
+  </div>
+
+  <div class="prog-wrap" id="prog">
+    <div class="prog-hdr">
+      <span class="prog-lbl" id="pt">Initializing...</span>
+      <span class="prog-pct" id="pp">0%</span>
+    </div>
+    <div class="prog-track"><div class="prog-fill" id="pf"></div></div>
+    <div class="logbox" id="pl"></div>
+  </div>
+</div>
+</section>
+
+<div id="results">
+<div class="container">
+
+  <div class="sec" id="ovs">
+    <div class="sechdr">
+      <div class="sectitle">📊 Store Overview</div>
+      <button class="export-btn" onclick="exportReport()">↓ Export JSON</button>
+    </div>
+    <div class="store-row"><span id="ovurl"></span></div>
+    <div class="mgrid" id="mg"></div>
+  </div>
+  <div class="sep"></div>
+
+  <div class="sec">
+    <div class="sechdr">
+      <div class="sectitle">💊 CRO Health Scores</div>
+      <span class="secsub">Based on live catalog benchmarks</span>
+    </div>
+    <div class="hgrid" id="hg"></div>
+  </div>
+  <div class="sep"></div>
+
+  <div class="sec">
+    <div class="sechdr">
+      <div class="sectitle">📈 Catalog Analytics</div>
+      <span class="secsub">Distribution charts from live product data</span>
+    </div>
+    <div class="cgrid">
+      <div class="ccrd"><div class="ctitle">Price Distribution</div><div class="ccanv"><canvas id="priceChart"></canvas></div></div>
+      <div class="ccrd"><div class="ctitle">Images per Product</div><div class="ccanv"><canvas id="imageChart"></canvas></div></div>
+      <div class="ccrd"><div class="ctitle">Variant Depth</div><div class="ccanv"><canvas id="variantChart"></canvas></div></div>
+      <div class="ccrd"><div class="ctitle">Description Length</div><div class="ccanv"><canvas id="descChart"></canvas></div></div>
+    </div>
+  </div>
+  <div class="sep"></div>
+
+  <div class="sec">
+    <div class="sechdr">
+      <div class="sectitle">🎯 CRO Opportunities</div>
+      <span class="secsub">Ranked by ICE score · Click any row to see evidence</span>
+    </div>
+    <div class="fbar">
+      <button class="fbtn on" onclick="fa('all',this)">All</button>
+      <button class="fbtn" onclick="fa('pdp',this)">📄 PDP</button>
+      <button class="fbtn" onclick="fa('catalog',this)">📦 Catalog</button>
+      <button class="fbtn" onclick="fa('collection',this)">🗂️ Collection</button>
+      <button class="fbtn" onclick="fa('pricing',this)">💰 Pricing</button>
+      <button class="fbtn" onclick="fa('cart',this)">🛒 Cart</button>
+      <button class="fbtn" onclick="fa('merchandising',this)">⭐ Merch</button>
+      <input class="srch" id="srch" type="text" placeholder="🔍 Search opportunities..." oninput="fs(this.value)">
+    </div>
+    <div class="twrap">
+      <table class="otbl">
+        <thead><tr>
+          <th onclick="so('rank')">#</th>
+          <th onclick="so('title')">Opportunity</th>
+          <th class="hm" onclick="so('area')">Area</th>
+          <th onclick="so('impact')" title="Impact 1–10">I</th>
+          <th onclick="so('confidence')" title="Confidence 1–10">C</th>
+          <th onclick="so('effort')" title="Effort (lower = easier)">E</th>
+          <th onclick="so('ice')">ICE ↓</th>
+          <th class="hm">Evidence</th>
+        </tr></thead>
+        <tbody id="ob"></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="sep"></div>
+
+  <div class="sec">
+    <div class="sechdr">
+      <div class="sectitle">🧪 Experiment Briefs</div>
+      <span class="secsub">Top 5 ICE-ranked opportunities as A/B test plans</span>
+    </div>
+    <div class="bgrid" id="bg"></div>
+  </div>
+
+  <div class="sec" id="techstacksec" style="display:none">
+    <div class="sep"></div>
+    <div class="sechdr">
+      <div class="sectitle">🛠️ Tech Stack &amp; Page Performance</div>
+      <span class="secsub">Live data from Google PageSpeed Insights API + homepage HTML analysis</span>
+    </div>
+    <div style="background:var(--glass);border:1px solid var(--bord);border-radius:var(--r);padding:22px" id="tsinner">
+      <div style="color:var(--muted);font-size:.82rem">Fetching performance data...</div>
+    </div>
+  </div>
+
+  <div class="sec" id="compsec" style="display:none">
+    <div class="sep"></div>
+    <div class="sechdr"><div class="sectitle">⚔️ Competitor Comparison</div></div>
+    <div style="background:var(--glass);border:1px solid var(--bord);border-radius:var(--r);overflow:hidden">
+      <div class="comp-grid" id="cg"></div>
+      <div style="padding:18px;border-top:1px solid var(--bord)">
+        <div class="sectitle" style="margin-bottom:13px;font-size:.88rem">📋 Delta Summary</div>
+        <table style="width:100%;border-collapse:collapse" id="dt"></table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="emodal" id="em2" onclick="cev(event)">
+  <div class="epanel">
+    <div class="ephdr"><div class="eptitle" id="et">Evidence</div><button class="closebtn" onclick="cep()">✕</button></div>
+    <div class="elist" id="el"></div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+<script>
+let pd=null,ao=[],sc={key:'ice',dir:-1},af='all',ce=false;
+const g=id=>document.getElementById(id);
+document.getElementById('ct').addEventListener('click',()=>{ce=!ce;g('sw').classList.toggle('on',ce);g('cs').classList.toggle('vis',ce);});
+function nu(u){u=u.trim().replace(/\/$/,'');if(!u.startsWith('http'))u='https://'+u;try{return new URL(u).origin;}catch{return null;}}
+function lg(m,t=''){const el=g('pl'),d=document.createElement('div');d.className='ll '+t;d.textContent='['+new Date().toLocaleTimeString()+'] '+m;el.appendChild(d);el.scrollTop=el.scrollHeight;}
+function sp(p,t){g('pf').style.width=p+'%';g('pp').textContent=Math.round(p)+'%';if(t)g('pt').textContent=t;}
+function sl(ms){return new Promise(r=>setTimeout(r,ms));}
+function se(m){g('em').textContent=m;g('eb').classList.add('vis');}
+function he(){g('eb').classList.remove('vis');}
+async function fsd(origin,limit=250){
+  const r={products:[],collections:[],url:origin,errors:[]};
+  let page=1,has=true,pp=Math.min(limit,250);
+  while(has&&r.products.length<limit){
+    try{
+      const res=await fetch(origin+'/products.json?limit='+pp+'&page='+page,{signal:AbortSignal.timeout(15000)});
+      if(!res.ok)throw new Error('HTTP '+res.status);
+      const d=await res.json();
+      if(!d.products||!d.products.length){has=false;break;}
+      r.products.push(...d.products);
+      if(d.products.length<pp)has=false;
+      page++;await sl(300);
+    }catch(e){r.errors.push('p'+page+': '+e.message);has=false;}
+  }
+  try{const res=await fetch(origin+'/collections.json?limit=250',{signal:AbortSignal.timeout(10000)});if(res.ok){const d=await res.json();r.collections=d.collections||[];}}catch(e){r.errors.push('cols: '+e.message);}
+  try{const res=await fetch(origin+'/cart.js',{signal:AbortSignal.timeout(8000)});if(res.ok){const d=await res.json();r.currency=d.currency||'';}}catch(e){}
+  r.fetchedAt=new Date().toISOString();
+  return r;
+}
+function ast(data){
+  const pr=data.products,co=data.collections;
+  if(!pr.length)return null;
+  const m={};
+  m.productCount=pr.length;m.collectionCount=co.length;
+  const px=pr.flatMap(p=>p.variants.map(v=>parseFloat(v.price))).filter(p=>p>0);
+  m.avgPrice=px.reduce((a,b)=>a+b,0)/px.length;
+  m.minPrice=Math.min(...px);m.maxPrice=Math.max(...px);
+  m.priceStdDev=Math.sqrt(px.reduce((s,p)=>s+Math.pow(p-m.avgPrice,2),0)/px.length);
+  const wca=pr.filter(p=>p.variants.some(v=>v.compare_at_price&&parseFloat(v.compare_at_price)>parseFloat(v.price)));
+  m.compareAtCoverage=wca.length/pr.length;
+  const ic=pr.map(p=>(p.images||[]).length);
+  m.avgImages=ic.reduce((a,b)=>a+b,0)/ic.length;
+  m.productsWithNoImages=ic.filter(c=>c===0).length;
+  m.productsWithFewImages=ic.filter(c=>c>0&&c<3).length;
+  const vc=pr.map(p=>p.variants.length);
+  m.avgVariants=vc.reduce((a,b)=>a+b,0)/vc.length;
+  m.singleVariantProducts=vc.filter(c=>c===1).length;
+  const dc=pr.map(p=>(p.body_html||'').replace(/<[^>]+>/g,'').trim().length);
+  m.avgDescLength=dc.reduce((a,b)=>a+b,0)/dc.length;
+  m.productsNoDesc=dc.filter(l=>l===0).length;
+  m.productsShortDesc=dc.filter(l=>l>0&&l<100).length;
+  const tc=pr.map(p=>(p.title||'').length);
+  m.avgTitleLength=tc.reduce((a,b)=>a+b,0)/tc.length;
+  m.longTitles=tc.filter(l=>l>80).length;
+  const tagStr=p=>Array.isArray(p.tags)?p.tags.join(','):(p.tags||'');
+  const at=pr.flatMap(p=>tagStr(p).split(',').map(t=>t.trim().toLowerCase()).filter(t=>t));
+  m.totalUniqueTags=new Set(at).size;
+  m.avgTagsPerProduct=at.length/pr.length;
+  m.productsNoTags=pr.filter(p=>!tagStr(p).trim()).length;
+  m.reviewSignalProducts=pr.filter(p=>{const t=tagStr(p).toLowerCase();return t.includes('review')||t.includes('rating')||t.includes('verified');}).length;
+  m.bundleProducts=pr.filter(p=>{const t=tagStr(p).toLowerCase()+' '+(p.title||'').toLowerCase();return t.includes('bundle')||t.includes('kit')||t.includes(' set')||t.includes('pack');}).length;
+  const pd2=pr.map(p=>new Date(p.published_at||p.created_at)).filter(d=>!isNaN(d));
+  pd2.sort((a,b)=>b-a);
+  m.newestProduct=pd2[0];
+  m.newLast30=pd2.filter(d=>(Date.now()-d)<30*864e5).length;
+  m.newLast90=pd2.filter(d=>(Date.now()-d)<90*864e5).length;
+  m.oosProducts=pr.filter(p=>p.variants.every(v=>!v.available)).length;
+  m.partialOosProducts=pr.filter(p=>p.variants.some(v=>!v.available)&&!p.variants.every(v=>!v.available)).length;
+  // Dynamic price buckets based on actual range
+  const pMin=m.minPrice,pMax=m.maxPrice,pRange=pMax-pMin;
+  const bucketSize=pRange/8||100;
+  const pBreaks=Array.from({length:9},(_,i)=>Math.round(pMin+i*bucketSize));
+  pBreaks[8]=Infinity;
+  m.priceBuckets=pBreaks.slice(0,-1).map((mn,i)=>({label:mn+'+'+(pBreaks[i+1]===Infinity?'+':'-'+pBreaks[i+1]),count:px.filter(p=>p>=mn&&p<pBreaks[i+1]).length}));
+  m.currencySymbol=m.currency||'';
+  m.imageBuckets=[0,1,2,3,4,5].map(n=>({label:n===5?'5+':String(n),count:n===5?ic.filter(c=>c>=5).length:ic.filter(c=>c===n).length}));
+  m.variantBuckets=[{label:'1',count:vc.filter(c=>c===1).length},{label:'2-3',count:vc.filter(c=>c>=2&&c<=3).length},{label:'4-6',count:vc.filter(c=>c>=4&&c<=6).length},{label:'7-10',count:vc.filter(c=>c>=7&&c<=10).length},{label:'11+',count:vc.filter(c=>c>10).length}];
+  m.descBuckets=[{label:'None',count:dc.filter(l=>l===0).length},{label:'<100',count:dc.filter(l=>l>0&&l<100).length},{label:'100-300',count:dc.filter(l=>l>=100&&l<300).length},{label:'300-600',count:dc.filter(l=>l>=300&&l<600).length},{label:'600+',count:dc.filter(l=>l>=600).length}];
+  // Recalibrated health scores — based on best-practice benchmarks not easy caps
+  const pctGoodImages=pr.filter(p=>(p.images||[]).length>=4).length/pr.length;
+  const pctRichDesc=pr.filter(p=>(p.body_html||'').replace(/<[^>]+>/g,'').trim().length>=200).length/pr.length;
+  const pctWellTagged=pr.filter(p=>tagStr(p).split(',').filter(t=>t.trim()).length>=5).length/pr.length;
+  m.healthScores={
+    'Image Coverage':Math.round(pctGoodImages*100),
+    'Description Quality':Math.round(Math.max(0,100-((m.productsNoDesc*1.5+m.productsShortDesc*0.8)/pr.length)*100)),
+    'Variant Depth':Math.min(100,Math.round(m.avgVariants*6)),
+    'Tag Taxonomy':Math.round(Math.min(100,pctWellTagged*100)),
+    'Pricing Clarity':Math.min(100,Math.round(m.compareAtCoverage*150)),
+    'Catalog Freshness':Math.min(100,Math.round((m.newLast30/Math.max(pr.length,1))*400)),
+    'Stock Health':Math.round(Math.max(0,100-(m.oosProducts/pr.length)*100)),
+    'Bundle Signals':Math.min(100,Math.round((m.bundleProducts/Math.max(pr.length,1))*800))
+  };
+  m.overallHealth=Math.round(Object.values(m.healthScores).reduce((a,b)=>a+b,0)/8);
+  // Store sample products as proof of real data
+  m.sampleProducts=pr.slice(0,6).map(p=>({
+    title:p.title,
+    price:parseFloat(p.variants[0]?.price||0),
+    images:(p.images||[]).length,
+    variants:p.variants.length,
+    available:p.variants.some(v=>v.available),
+    tags:tagStr(p).split(',').filter(t=>t.trim()).length,
+    handle:p.handle
+  }));
+  m.currency=data.currency||'';
+  m.fetchedAt=data.fetchedAt||new Date().toISOString();
+  return m;
+}
+function gen(m){
+  const opps=[],p=m.productCount,curSym=m.currency||'';
+  function add(title,area,desc,impact,conf,effort,ev,rec,hyp){opps.push({title,area,desc,impact,confidence:conf,effort,ice:Math.round(impact*conf/effort*10)/10,evidence:ev,recommendation:rec,hypothesis:hyp});}
+  if(m.productsWithNoImages>0||m.productsWithFewImages/p>.2){const pct=Math.round(m.productsWithFewImages/p*100);add('Increase PDP image count (under-imaged products detected)','pdp',pct+'% of products have fewer than 3 images. Shoppers rely on visuals. More angles, lifestyle, and detail shots reduce uncertainty and returns.',8,Math.min(10,6+Math.round(pct/20)),4,[{title:'Products with 0 images',data:m.productsWithNoImages+' ('+Math.round(m.productsWithNoImages/p*100)+'%)'},{title:'Products with < 3 images',data:m.productsWithFewImages+' ('+pct+'%)'},{title:'Avg images/product',data:m.avgImages.toFixed(1)}],'Add minimum 4 images per product: hero, lifestyle, detail, and scale/size reference shot.','Adding lifestyle and detail images to products with fewer than 3 images will increase add-to-cart rate by 10-20% on those PDPs.');}
+  if(m.productsNoDesc/p>.05||m.productsShortDesc/p>.1){const nd=Math.round(m.productsNoDesc/p*100),sd=Math.round(m.productsShortDesc/p*100);add('Write richer product descriptions for thin-content PDPs','pdp',nd+'% of products have no description and '+sd+'% have under 100 characters. Descriptions answer objections and target search intent.',7,Math.min(10,5+Math.round(nd/10)),5,[{title:'Products with no description',data:m.productsNoDesc+' ('+nd+'%)'},{title:'Products with under 100 chars',data:m.productsShortDesc+' ('+sd+'%)'},{title:'Avg description length',data:Math.round(m.avgDescLength)+' characters'}],'Write 150-400 word descriptions: key benefits, materials/specs, size/fit guidance, and use-cases.','Adding benefit-led descriptions to thin PDPs will reduce bounce and increase conversion rate by 8-15%.');}
+  if(m.compareAtCoverage<.15&&p>10){add('Add compare-at pricing to surface perceived savings','pricing','Only '+Math.round(m.compareAtCoverage*100)+'% of products use compare-at pricing. Strikethrough prices signal value and create urgency without deep discounting.',8,7,3,[{title:'Products with compare-at price',data:Math.round(m.compareAtCoverage*100)+'%'},{title:'Avg product price',data:curSym+' '+Math.round(m.avgPrice).toLocaleString()}],'Apply compare-at prices as MSRP anchors across catalog. Clearly mark sale items with compare-at pricing.','Showing strikethrough pricing on 30%+ of catalog will increase perceived value and lift collection-page CTR by 5-12%.');}
+  if(m.compareAtCoverage>.6){add('Excessive discounting may erode brand premium','pricing',Math.round(m.compareAtCoverage*100)+'% of products show compare-at pricing. When everything is perpetually on sale, urgency cues lose effectiveness.',7,6,3,[{title:'Products with compare-at price',data:Math.round(m.compareAtCoverage*100)+'%'},{title:'Price range',data:curSym+' '+Math.round(m.minPrice).toLocaleString()+' to '+curSym+' '+Math.round(m.maxPrice).toLocaleString()}],'Limit sale signals to seasonal events or true clearance. Use bundles and value stacking instead of blanket discounts.','Reducing visible discount signals to under 30% of catalog will improve AOV and reduce margin erosion.');}
+  if(m.singleVariantProducts/p>.4){const pct=Math.round(m.singleVariantProducts/p*100);add('Explore variants and bundles for single-SKU products','catalog',pct+'% of products have a single variant. Offering color, size, or bundle variants increases AOV and consolidates catalog traffic.',6,5,6,[{title:'Single-variant products',data:m.singleVariantProducts+' ('+pct+'%)'},{title:'Avg variants per product',data:m.avgVariants.toFixed(1)}],'Audit single-variant products for bundle or size opportunity. Add color or size variants where applicable.','Adding relevant variants to top-traffic single-SKU products will increase time-on-page and reduce catalog fragmentation.');}
+  if(m.productsNoTags/p>.2||m.avgTagsPerProduct<3){const pct=Math.round(m.productsNoTags/p*100);add('Build a consistent tag taxonomy for smart collections and filtering','catalog',pct+'% of products have no tags, averaging '+m.avgTagsPerProduct.toFixed(1)+' tags per product. Tags drive smart collections, filtering, cross-selling, and personalization.',7,6,4,[{title:'Products with no tags',data:m.productsNoTags+' ('+pct+'%)'},{title:'Avg tags per product',data:m.avgTagsPerProduct.toFixed(1)},{title:'Total unique tags',data:String(m.totalUniqueTags)}],'Define a tag schema covering product-type, gender, use-case, material, and collection. Apply consistently via bulk editor.','Consistent tagging enables smart collection automation and filtering UX improvements — expected 5-15% engagement lift.');}
+  if(m.oosProducts/p>.05){const pct=Math.round(m.oosProducts/p*100);add('Remove or redirect fully out-of-stock products','catalog',m.oosProducts+' products ('+pct+'%) are completely out of stock. These dilute collection quality and create dead-end shopper journeys.',6,Math.min(10,5+Math.round(pct/5)),3,[{title:'Fully OOS products',data:m.oosProducts+' ('+pct+'%)'},{title:'Partially OOS products',data:String(m.partialOosProducts)}],'Hide OOS products from collections or add Back-in-Stock notification capture. Show restock date where known.','Filtering OOS products from collections will improve collection quality and reduce dead-end journeys.');}
+  if(m.partialOosProducts/p>.1){const pct=Math.round(m.partialOosProducts/p*100);add('Add Back-in-Stock capture on unavailable variants','cart',pct+'% of products have some unavailable variants. Without notification capture this is lost demand and recoverable revenue.',7,7,3,[{title:'Partially OOS products',data:m.partialOosProducts+' ('+pct+'%)'}],'Install Back in Stock app or Klaviyo OOS flow on variant selectors. Trigger email and SMS notification on restock.','Capturing OOS demand via email and SMS will convert 10-25% of notified shoppers when items restock.');}
+  if(m.collectionCount<5&&p>20){add('Create more targeted collections to improve product discoverability','collection','Only '+m.collectionCount+' collections for '+p+' products. Shoppers who browse by category convert higher than search-only shoppers.',7,6,5,[{title:'Collection count',data:String(m.collectionCount)},{title:'Product count',data:String(p)},{title:'Products per collection',data:(p/Math.max(m.collectionCount,1)).toFixed(0)}],'Create collections by use-case, occasion, bestsellers, new arrivals, and price range. Add to main navigation.','Adding targeted collections will reduce homepage pogo-sticking and improve the product discovery funnel.');}
+  if(m.collectionCount>40&&p<200){add('Consolidate over-fragmented collection structure','collection',m.collectionCount+' collections for only '+p+' products creates navigation complexity and dilutes per-collection traffic.',6,5,5,[{title:'Collection count',data:String(m.collectionCount)},{title:'Product count',data:String(p)}],'Merge thin collections. Use tags and faceted filtering instead of dozens of separate collection pages.','Flattening navigation to 8-15 primary collections will improve menu clarity and reduce choice paralysis.');}
+  if(m.bundleProducts/p<.05&&p>15){add('Introduce product bundles to meaningfully increase AOV','cart','Only '+m.bundleProducts+' bundle or kit products detected. Bundles are one of the highest-leverage AOV levers in DTC commerce.',9,6,6,[{title:'Bundle products detected',data:String(m.bundleProducts)},{title:'Avg product price',data:curSym+' '+Math.round(m.avgPrice).toLocaleString()}],'Create Starter Kit, Bundle and Save, and Complete Set products combining your top 3 sellers at 10-15% off individual pricing.','Launching 3 hero bundles will lift AOV by 15-30% for shoppers who engage with bundle pages.');}
+  if(m.newLast90<3&&p>10){add('Increase catalog freshness to drive repeat visits and email engagement','merchandising','Only '+m.newLast90+' products published in the last 90 days. Stale catalogs reduce return visit frequency and email re-engagement.',6,5,7,[{title:'New products last 30 days',data:String(m.newLast30)},{title:'New products last 90 days',data:String(m.newLast90)},{title:'Newest product date',data:m.newestProduct?m.newestProduct.toLocaleDateString():'Unknown'}],'Create a New Arrivals publishing cadence of 2-4 products per month. Feature prominently on homepage and in email flows.','Consistent new product drops will improve email re-engagement rates and increase repeat purchase rate.');}
+  if(m.reviewSignalProducts===0){add('Add social proof and review integration to product pages','pdp','No review-tagged products detected. Social proof including reviews, ratings, and UGC is the single highest-impact trust signal on any PDP.',9,7,4,[{title:'Products with review signals',data:'0'},{title:'Total products analyzed',data:String(p)}],'Install a review app such as Okendo, Judge.me, or Yotpo. Import any existing reviews and add a review request to post-purchase email flow.','Adding star ratings and reviews to PDPs typically lifts conversion rate by 15-30% based on industry benchmarks.');}
+  if(m.priceStdDev/m.avgPrice>1.5&&p>20){add('Clarify pricing architecture to reduce shopper confusion','pricing','High price variance (avg '+curSym+' '+Math.round(m.avgPrice).toLocaleString()+', range '+curSym+' '+Math.round(m.minPrice).toLocaleString()+' to '+curSym+' '+Math.round(m.maxPrice).toLocaleString()+') suggests inconsistent positioning. Shoppers struggle to anchor value.',6,5,4,[{title:'Price range',data:curSym+' '+Math.round(m.minPrice).toLocaleString()+' to '+curSym+' '+Math.round(m.maxPrice).toLocaleString()},{title:'Avg price',data:curSym+' '+Math.round(m.avgPrice).toLocaleString()},{title:'Std deviation',data:curSym+' '+Math.round(m.priceStdDev).toLocaleString()}],'Group products into Good, Better, Best tiers. Use collection pages or landing pages to segment price-point shoppers.','Clearer pricing tiers will reduce decision fatigue and improve conversion rate in mid-price segments.');}
+  if(m.longTitles/p>.15){const pct=Math.round(m.longTitles/p*100);add('Shorten overly long product titles for better scan-ability','pdp',pct+'% of products have titles over 80 characters. These truncate in search results, collection grids, and mobile views.',5,7,3,[{title:'Products with title over 80 chars',data:m.longTitles+' ('+pct+'%)'},{title:'Avg title length',data:Math.round(m.avgTitleLength)+' characters'}],'Rewrite titles as Product Name dash Key Differentiator. Keep under 60 characters for best SEO and display performance.','Shorter, clearer titles will improve CTR from search results and collection grid scan-ability.');}
+  opps.sort((a,b)=>b.ice-a.ice);
+  opps.forEach((o,i)=>{o.rank=i+1;});
+  return opps;
+}
+function ro(m,url){
+  const sym=m.currency?'('+m.currency+') ':'';
+  const ft=m.fetchedAt?new Date(m.fetchedAt).toLocaleTimeString():'just now';
+  g('ovurl').innerHTML=url+'<span style="margin-left:10px;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);color:var(--green);padding:2px 8px;border-radius:20px;font-size:.7rem;font-weight:600;">✓ Live data · fetched at '+ft+'</span>';
+  const cur=m.currency||'';
+  const cards=[
+    {l:'Total Products',v:m.productCount,s:'SKUs analyzed',i:'📦'},
+    {l:'Collections',v:m.collectionCount,s:'catalog sections',i:'🗂️'},
+    {l:'Avg Price',v:(cur?cur+' ':'')+Math.round(m.avgPrice).toLocaleString(),s:(cur||'')+''+Math.round(m.minPrice).toLocaleString()+' – '+(cur||'')+Math.round(m.maxPrice).toLocaleString(),i:'💰'},
+    {l:'Avg Images',v:m.avgImages.toFixed(1),s:'per product',i:'🖼️'},
+    {l:'Avg Variants',v:m.avgVariants.toFixed(1),s:'per product',i:'🎨'},
+    {l:'OOS Rate',v:Math.round(m.oosProducts/m.productCount*100)+'%',s:m.oosProducts+' fully OOS products',i:'⚠️'},
+    {l:'CRO Health',v:m.overallHealth+'/100',s:'overall readiness',i:'💊'},
+    {l:'New (30d)',v:m.newLast30,s:m.newLast90+' added in 90 days',i:'✨'}
+  ];
+  g('mg').innerHTML=cards.map(c=>'<div class="mcard fin"><div class="mlbl">'+c.i+' '+c.l+'</div><div class="mval">'+c.v+'</div><div class="msub">'+c.s+'</div></div>').join('');
+  g('hg').innerHTML=Object.entries(m.healthScores).map(([n,s])=>{
+    const col=s>=70?'var(--green)':s>=40?'var(--yellow)':'var(--red)';
+    const bm=n==='Image Coverage'?'benchmark: 4+ images/product':n==='Description Quality'?'benchmark: 200+ char desc':n==='Variant Depth'?'benchmark: avg 5+ variants':n==='Tag Taxonomy'?'benchmark: 5+ tags/product':n==='Pricing Clarity'?'% with compare-at price':n==='Catalog Freshness'?'based on last 30 days':n==='Stock Health'?'% fully in-stock products':'% of catalog are bundles';
+    return '<div class="hbi fin"><div class="hbihdr"><span class="hbname">'+n+'</span><span class="hbscore" style="color:'+col+'">'+s+'/100</span></div><div class="hbtrack"><div class="hbfill" style="width:'+s+'%;background:'+col+'"></div></div><div style="font-size:.68rem;color:var(--muted);margin-top:4px;">'+bm+'</div></div>';
+  }).join('');
+  // Live data sample table
+  if(m.sampleProducts&&m.sampleProducts.length){
+    const cur2=m.currency||'';
+    const rows=m.sampleProducts.map(p=>'<tr style="border-bottom:1px solid var(--bord)"><td style="padding:8px 12px;font-size:.8rem;color:var(--txt);max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+p.title+'</td><td style="padding:8px 12px;font-size:.78rem;color:var(--txt2);font-family:monospace;">'+(cur2?cur2+' ':'')+p.price.toLocaleString()+'</td><td style="padding:8px 12px;font-size:.78rem;color:var(--txt2);">'+p.images+' 🖼️</td><td style="padding:8px 12px;font-size:.78rem;color:var(--txt2);">'+p.variants+' vars</td><td style="padding:8px 12px;font-size:.78rem;">'+(p.available?'<span style="color:var(--green)">✓ In stock</span>':'<span style="color:var(--red)">✗ OOS</span>')+'</td></tr>').join('');
+    const sampleHtml='<div class="sgap" style="margin-top:24px"><div class="shdr"><div class="stitle" style="font-size:.9rem;">🔍 Live Data Sample <span style="font-size:.72rem;font-weight:400;color:var(--muted);margin-left:8px;">First 6 products fetched from '+url+' API — proof of real data</span></div></div><div style="background:var(--card);border:1px solid var(--bord);border-radius:12px;overflow:hidden;"><table style="width:100%;border-collapse:collapse;"><thead><tr style="border-bottom:1px solid var(--bord);"><th style="padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;">Product Title</th><th style="padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;">Price</th><th style="padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;">Images</th><th style="padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;">Variants</th><th style="padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;">Stock</th></tr></thead><tbody>'+rows+'</tbody></table></div></div>';
+    const el=g('hg').parentNode;
+    const existing=document.getElementById('liveDataSample');
+    if(existing)existing.remove();
+    const div=document.createElement('div');div.id='liveDataSample';div.innerHTML=sampleHtml;
+    el.appendChild(div);
+  }
+}
+let ci={};
+function rc(m){
+  const td={plugins:{legend:{display:false},tooltip:{backgroundColor:'#1a2235',borderColor:'#2a3f60',borderWidth:1,titleColor:'#f0f4ff',bodyColor:'#8896b3'}},scales:{x:{grid:{color:'#1e2d45'},ticks:{color:'#8896b3',font:{size:11}}},y:{grid:{color:'#1e2d45'},ticks:{color:'#8896b3',font:{size:11}},beginAtZero:true}}};
+  Object.values(ci).forEach(c=>c.destroy());ci={};
+  ci.p=new Chart(g('priceChart'),{type:'bar',data:{labels:m.priceBuckets.map(b=>b.label),datasets:[{data:m.priceBuckets.map(b=>b.count),backgroundColor:'rgba(59,130,246,0.5)',borderColor:'#3b82f6',borderWidth:1,borderRadius:4}]},options:{...td}});
+  ci.i=new Chart(g('imageChart'),{type:'bar',data:{labels:m.imageBuckets.map(b=>b.label),datasets:[{data:m.imageBuckets.map(b=>b.count),backgroundColor:['rgba(239,68,68,0.5)','rgba(245,158,11,0.5)','rgba(245,158,11,0.5)','rgba(16,185,129,0.5)','rgba(16,185,129,0.5)','rgba(16,185,129,0.5)'],borderColor:['#ef4444','#f59e0b','#f59e0b','#10b981','#10b981','#10b981'],borderWidth:1,borderRadius:4}]},options:{...td}});
+  ci.v=new Chart(g('variantChart'),{type:'doughnut',data:{labels:m.variantBuckets.map(b=>b.label),datasets:[{data:m.variantBuckets.map(b=>b.count),backgroundColor:['#3b82f6','#8b5cf6','#06b6d4','#10b981','#f59e0b'],borderWidth:0}]},options:{plugins:{legend:{display:true,position:'right',labels:{color:'#8896b3',font:{size:11},padding:12}},tooltip:td.plugins.tooltip}}});
+  ci.d=new Chart(g('descChart'),{type:'bar',data:{labels:m.descBuckets.map(b=>b.label),datasets:[{data:m.descBuckets.map(b=>b.count),backgroundColor:'rgba(139,92,246,0.5)',borderColor:'#8b5cf6',borderWidth:1,borderRadius:4}]},options:{...td}});
+}
+const as={pdp:{bg:'rgba(59,130,246,0.12)',c:'#3b82f6',i:'📄'},catalog:{bg:'rgba(6,182,212,0.12)',c:'#06b6d4',i:'📦'},collection:{bg:'rgba(139,92,246,0.12)',c:'#8b5cf6',i:'🗂️'},pricing:{bg:'rgba(245,158,11,0.12)',c:'#f59e0b',i:'💰'},cart:{bg:'rgba(16,185,129,0.12)',c:'#10b981',i:'🛒'},merchandising:{bg:'rgba(249,115,22,0.12)',c:'#f97316',i:'⭐'}};
+function ic(s){return s>=7?'#10b981':s>=4?'#f59e0b':'#ef4444';}
+function rot(opps){ao=opps;rtb(opps);}
+function rtb(opps){
+  const b=g('ob');
+  if(!opps.length){b.innerHTML='<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--muted)">No opportunities match this filter.</td></tr>';return;}
+  b.innerHTML=opps.map(o=>{
+    const st=as[o.area]||as.pdp,icl=o.impact>=8?'var(--green)':o.impact>=6?'var(--yellow)':'var(--muted)',ccl=o.confidence>=8?'var(--green)':o.confidence>=6?'var(--yellow)':'var(--muted)',ecl=o.effort<=3?'var(--green)':o.effort<=5?'var(--yellow)':'var(--red)';
+    const chips=(o.evidence||[]).slice(0,2).map(e=>'<span class="echip">'+e.title+'</span>').join('');
+    return '<tr onclick="sev('+(o.rank-1)+')"><td><div class="rank">'+o.rank+'</div></td><td><div class="otitle">'+o.title+'</div><div style="font-size:.75rem;color:var(--muted);margin-top:3px">'+o.desc.substring(0,80)+'...</div></td><td class="hm"><span class="atag" style="background:'+st.bg+';color:'+st.c+'">'+st.i+' '+o.area+'</span></td><td><span class="ipill" style="color:'+icl+'">'+o.impact+'</span></td><td><span class="ipill" style="color:'+ccl+'">'+o.confidence+'</span></td><td><span class="ipill" style="color:'+ecl+'">'+o.effort+'</span></td><td><span class="icescore" style="color:'+ic(o.ice)+'">'+o.ice+'</span></td><td class="hm"><div class="echips">'+chips+'</div></td></tr>';
+  }).join('');
+}
+function fa(area,btn){af=area;document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('on'));btn.classList.add('on');af2();}
+function fs(q){af2(q);}
+function af2(q){const sq=(q!==undefined?q:(g('srch')?g('srch').value:'')).toLowerCase();let f=ao;if(af!=='all')f=f.filter(o=>o.area===af);if(sq)f=f.filter(o=>o.title.toLowerCase().includes(sq)||o.desc.toLowerCase().includes(sq));rtb(f);}
+function so(key){if(sc.key===key)sc.dir*=-1;else{sc.key=key;sc.dir=-1;}ao.sort((a,b)=>{let va=a[key],vb=b[key];if(typeof va==='string')return va.localeCompare(vb)*sc.dir;return(va-vb)*sc.dir;});af2();}
+function sev(idx){
+  const o=ao[idx];if(!o)return;
+  g('et').textContent='Evidence: '+o.title;
+  g('el').innerHTML='<div class="eitem"><div class="eitmtitle">📝 Description</div><div class="eitmdata">'+o.desc+'</div></div><div class="eitem"><div class="eitmtitle">✅ Recommendation</div><div class="eitmdata">'+o.recommendation+'</div></div>'+(o.evidence||[]).map(e=>'<div class="eitem"><div class="eitmtitle">📊 '+e.title+'</div><div class="eitmdata">'+e.data+'</div></div>').join('');
+  g('em2').classList.add('op');
+}
+function cev(e){if(e.target===g('em2'))cep();}
+function cep(){g('em2').classList.remove('op');}
+function rb(opps){
+  const top=opps.slice(0,5);
+  g('bg').innerHTML=top.map((o,i)=>{
+    const st=as[o.area]||as.pdp;
+    return '<div class="bcard" id="bc'+i+'"><div class="bhdr" onclick="tb('+i+')"><div class="bnum">'+(i+1)+'</div><div class="bmeta"><div class="btitle">'+o.title+'</div><div class="bhyp">'+o.hypothesis+'</div><div class="btags"><span class="atag" style="background:'+st.bg+';color:'+st.c+'">'+st.i+' '+o.area+'</span><span class="badge">ICE '+o.ice+'</span><span style="font-size:.75rem;color:var(--muted)">I:'+o.impact+' C:'+o.confidence+' E:'+o.effort+'</span></div></div><span class="bchev">⌄</span></div><div class="bbody"><div class="bslbl">🔬 Hypothesis</div><div class="bscont">'+o.hypothesis+'</div><div class="bslbl">📊 Evidence</div><div class="bscont"><ul>'+(o.evidence||[]).map(e=>'<li><strong>'+e.title+':</strong> '+e.data+'</li>').join('')+'</ul></div><div class="bslbl">🧪 Test Design</div><div class="vgrid"><div class="vcard ctrl"><div class="vlbl ctrl">Control (A)</div><div class="vdesc">Current experience unchanged.</div></div><div class="vcard trt"><div class="vlbl trt">Treatment (B)</div><div class="vdesc">'+o.recommendation+'</div></div></div><div class="bslbl">📈 Success Metrics</div><div class="bscont"><ul><li><strong>Primary:</strong> '+(o.area==='cart'||o.area==='pdp'?'Add-to-cart rate, Conversion rate':'Click-through rate, Conversion rate')+'</li><li><strong>Secondary:</strong> AOV, Revenue per session, Bounce rate</li><li><strong>Guardrail:</strong> Return rate, Customer satisfaction score</li></ul></div><div class="bslbl">⏱️ Duration and Traffic Split</div><div class="bscont">Run for <strong>2-4 weeks</strong> minimum at 50/50 traffic split. Target all devices unless specifically mobile. Aim for 95%+ statistical significance.</div><div class="bslbl">🔧 Implementation Notes</div><div class="bscont">'+o.recommendation+'</div></div></div>';
+  }).join('');
+  setTimeout(()=>tb(0),100);
+}
+function tb(i){const c=g('bc'+i);if(c)c.classList.toggle('op');}
+function rcomp(pm,cm,pu,cu){
+  g('compsec').style.display='block';
+  const pc=pm.currency||'',cc=cm.currency||'';
+  const mets=[
+    {l:'Total Products',k:'productCount',hb:true,f:(v)=>v.toLocaleString()},
+    {l:'Avg Price',k:'avgPrice',hb:null,fp:(v)=>(pc?pc+' ':'')+Math.round(v).toLocaleString(),fc:(v)=>(cc?cc+' ':'')+Math.round(v).toLocaleString()},
+    {l:'Avg Images / Product',k:'avgImages',hb:true,f:(v)=>v.toFixed(1)},
+    {l:'Avg Variants / Product',k:'avgVariants',hb:true,f:(v)=>v.toFixed(1)},
+    {l:'Avg Description Length',k:'avgDescLength',hb:true,f:(v)=>Math.round(v)+' chars'},
+    {l:'Compare-at Coverage',k:'compareAtCoverage',hb:null,f:(v)=>Math.round(v*100)+'%'},
+    {l:'OOS Products',k:'oosProducts',hb:false,f:(v)=>v},
+    {l:'Bundles Detected',k:'bundleProducts',hb:true,f:(v)=>v},
+    {l:'CRO Health Score',k:'overallHealth',hb:true,f:(v)=>v+'/100'},
+    {l:'New Products (90d)',k:'newLast90',hb:true,f:(v)=>v},
+    {l:'PageSpeed (Mobile)',k:'pageSpeedScore',hb:true,f:(v)=>v!=null?v+'/100':'N/A'},
+    {l:'Has Reviews App',k:'hasReviews',hb:true,f:(v)=>v?'✓ Yes':'✗ No'},
+    {l:'Has Email Capture',k:'hasEmailCapture',hb:true,f:(v)=>v?'✓ Yes':'✗ No'},
+    {l:'Has Live Chat',k:'hasLiveChat',hb:true,f:(v)=>v?'✓ Yes':'✗ No'},
+    {l:'Has BNPL / AfterPay',k:'hasAfterPay',hb:true,f:(v)=>v?'✓ Yes':'✗ No'}
+  ];
+  const rp=(m,url,col,lbl,isComp)=>{
+    const rows=mets.map(mt=>{
+      const fn=isComp?(mt.fc||mt.f):(mt.fp||mt.f);
+      const val=m[mt.k];
+      const disp=val==null?'—':fn(val);
+      return '<tr><td class="dmet">'+mt.l+'</td><td class="dval">'+disp+'</td></tr>';
+    }).join('');
+    return '<div><div class="cshdr"><div class="csdot" style="background:'+col+'"></div><div><div class="csname">'+lbl+'</div><div class="csurl">'+url+'</div></div></div><table class="dtbl">'+rows+'</table></div>';
+  };
+  g('cg').innerHTML=rp(pm,pu,'#3b82f6','Your Store',false)+rp(cm,cu,'#8b5cf6','Competitor',true);
+  g('dt').innerHTML=mets.map(mt=>{
+    const pv=pm[mt.k],cv=cm[mt.k];
+    if(pv==null||cv==null||typeof pv==='boolean'||typeof cv==='boolean')return '';
+    if(typeof pv!=='number'||typeof cv!=='number')return '';
+    const delta=pv-cv;
+    const ds=(delta>=0?'+':'')+delta.toFixed(1);
+    let badge=mt.hb===null?'<span class="dbadge neut">~ Neutral</span>':(mt.hb===true?(delta>=0?'<span class="dbadge better">▲ Better</span>':'<span class="dbadge worse">▼ Behind</span>'):(delta<=0?'<span class="dbadge better">▲ Better</span>':'<span class="dbadge worse">▼ Behind</span>'));
+    return '<tr style="border-bottom:1px solid var(--bord)"><td style="padding:10px 16px;font-size:.82rem;color:var(--txt2)">'+mt.l+'</td><td style="padding:10px 16px;font-size:.82rem;font-weight:700;font-family:monospace">'+ds+'</td><td style="padding:10px 16px">'+badge+'</td></tr>';
+  }).join('');
+}
+// ====== NEW: fetchPageSpeed() ======
+async function fetchPageSpeed(origin){
+  try{
+    const fields='lighthouseResult.categories.performance,lighthouseResult.audits.largest-contentful-paint,lighthouseResult.audits.first-contentful-paint,lighthouseResult.audits.total-blocking-time,lighthouseResult.audits.cumulative-layout-shift,lighthouseResult.audits.speed-index';
+    const url=`https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=${encodeURIComponent(origin)}&strategy=mobile&fields=${encodeURIComponent(fields)}`;
+    const res=await fetch(url,{signal:AbortSignal.timeout(30000)});
+    if(!res.ok)return null;
+    const d=await res.json();
+    const lr=d.lighthouseResult;
+    if(!lr)return null;
+    return {
+      score:Math.round((lr.categories?.performance?.score||0)*100),
+      lcp:lr.audits?.['largest-contentful-paint']?.displayValue||'?',
+      fcp:lr.audits?.['first-contentful-paint']?.displayValue||'?',
+      tbt:lr.audits?.['total-blocking-time']?.displayValue||'?',
+      cls:lr.audits?.['cumulative-layout-shift']?.displayValue||'?',
+      si:lr.audits?.['speed-index']?.displayValue||'?'
+    };
+  }catch(e){return null;}
+}
+
+// ====== NEW: fetchTechStack() ======
+async function fetchTechStack(origin){
+  try{
+    const proxyUrl=`https://api.allorigins.win/get?url=${encodeURIComponent(origin+'/')}`;
+    const res=await fetch(proxyUrl,{signal:AbortSignal.timeout(20000)});
+    if(!res.ok)return null;
+    const d=await res.json();
+    const h=(d.contents||'').toLowerCase();
+    if(h.length<200)return null;
+    const det=(patterns)=>patterns.some(p=>h.includes(p));
+    const titleM=h.match(/<title[^>]*>([^<]{1,120})<\/title>/);
+    const descM=h.match(/name=["']description["'][^>]*content=["']([^"']{10,200})["']/)||h.match(/content=["']([^"']{10,200})["'][^>]*name=["']description["']/);
+    return {
+      hasReviews:det(['yotpo','okendo','judge.me','reviews.io','loox.io','stamped.io','rivyo','ali reviews']),
+      reviewApp:h.includes('yotpo')?'Yotpo':h.includes('okendo')?'Okendo':h.includes('judge.me')?'Judge.me':h.includes('loox.io')?'Loox':h.includes('stamped.io')?'Stamped':h.includes('reviews.io')?'Reviews.io':'None detected',
+      hasEmailCapture:det(['klaviyo','mailchimp','omnisend','privy','justuno','popup','newsletter','subscribe']),
+      emailTool:h.includes('klaviyo')?'Klaviyo':h.includes('omnisend')?'Omnisend':h.includes('mailchimp')?'Mailchimp':h.includes('privy')?'Privy':'Generic',
+      hasLiveChat:det(['tidio','gorgias','tawk.to','zendesk','intercom','crisp.chat','freshchat']),
+      chatTool:h.includes('gorgias')?'Gorgias':h.includes('tidio')?'Tidio':h.includes('tawk.to')?'Tawk.to':h.includes('zendesk')?'Zendesk':h.includes('intercom')?'Intercom':'None',
+      hasAfterPay:det(['afterpay','clearpay','klarna','zip pay','laybuy','sezzle','affirm','paidy']),
+      bnplTool:h.includes('klarna')?'Klarna':h.includes('afterpay')?'Afterpay':h.includes('clearpay')?'Clearpay':h.includes('zip')?'Zip Pay':h.includes('sezzle')?'Sezzle':h.includes('affirm')?'Affirm':'None',
+      hasLoyalty:det(['smile.io','yotpo loyalty','loyalty lion','growave','lootly']),
+      loyaltyTool:h.includes('smile.io')?'Smile.io':h.includes('loyaltylion')?'LoyaltyLion':h.includes('growave')?'Growave':'None',
+      hasStructuredData:h.includes('application/ld+json'),
+      hasMetaTitle:!!titleM,
+      metaTitle:(titleM?titleM[1]:'').trim().substring(0,80),
+      hasMetaDesc:!!descM,
+      metaDesc:(descM?descM[1]:'').trim().substring(0,120),
+      hasGA:det(['google-analytics','gtag(','analytics.js','ga.js']),
+      hasFBPixel:det(["fbq('init","fbq(\"init",'facebook pixel','connect.facebook.net']),
+      hasTikTokPixel:h.includes('analytics.tiktok.com')||h.includes('tiktok pixel'),
+      social:{
+        instagram:h.includes('instagram.com'),
+        tiktok:h.includes('tiktok.com'),
+        facebook:h.includes('facebook.com'),
+        pinterest:h.includes('pinterest.com'),
+        youtube:h.includes('youtube.com'),
+        whatsapp:h.includes('wa.me')||h.includes('whatsapp')
+      },
+      hasAnnouncementBar:det(['announcement','announcement-bar','announcement_bar']),
+      hasStickyCart:det(['sticky-cart','sticky_cart','sticky-header','stickycart']),
+      hasWishlist:det(['wishlist','wish-list','heart-icon']),
+      hasQuickView:det(['quick-view','quickview','quick_view'])
+    };
+  }catch(e){return null;}
+}
+
+// ====== NEW: renderTechStack() ======
+function renderTechStack(ts,ps,url){
+  const el=document.getElementById('techstacksec');
+  if(!el)return;
+  el.style.display='block';
+  function chip(label,val,present,color){
+    const c=present?color||'var(--green)':'var(--muted)';
+    return '<span style="display:inline-flex;align-items:center;gap:5px;background:'+(present?'rgba(16,185,129,0.08)':'rgba(255,255,255,0.03)')+';border:1px solid '+(present?'rgba(16,185,129,0.25)':'var(--bord)')+';color:'+c+';padding:4px 10px;border-radius:20px;font-size:.75rem;font-weight:600;margin:3px;">'+(present?'✓':'✗')+' '+(val||label)+'</span>';
+  }
+  function section(title,icon,html){return '<div style="margin-bottom:20px"><div style="font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px">'+icon+' '+title+'</div><div>'+html+'</div></div>';}
+  let html='';
+  if(ps){
+    const col=ps.score>=80?'var(--green)':ps.score>=50?'var(--yellow)':'var(--red)';
+    html+='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px;margin-bottom:20px">';
+    html+='<div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center"><div style="font-size:1.4rem;font-weight:800;color:'+col+'">'+ps.score+'</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">Perf Score</div></div>';
+    html+='<div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center"><div style="font-size:1rem;font-weight:700;color:var(--txt)">'+ps.lcp+'</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">LCP</div></div>';
+    html+='<div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center"><div style="font-size:1rem;font-weight:700;color:var(--txt)">'+ps.fcp+'</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">FCP</div></div>';
+    html+='<div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center"><div style="font-size:1rem;font-weight:700;color:var(--txt)">'+ps.tbt+'</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">TBT</div></div>';
+    html+='<div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center"><div style="font-size:1rem;font-weight:700;color:var(--txt)">'+ps.cls+'</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">CLS</div></div>';
+    html+='<div style="background:var(--card);border:1px solid var(--bord);border-radius:10px;padding:14px;text-align:center"><div style="font-size:1rem;font-weight:700;color:var(--txt)">'+ps.si+'</div><div style="font-size:.68rem;color:var(--muted);margin-top:2px">Speed Index</div></div>';
+    html+='</div>';
+    html+='<div style="font-size:.72rem;color:var(--muted);margin-bottom:16px;padding:8px 12px;background:rgba(59,130,246,0.06);border-radius:8px;border-left:2px solid var(--blue)">📡 Data source: <strong>Google PageSpeed Insights API</strong> (real-time mobile audit of '+url+')</div>';
+  }else{
+    html+='<div style="color:var(--muted);font-size:.82rem;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;margin-bottom:16px">⚠️ PageSpeed Insights unavailable — Google may have rate-limited this request. Try again in a minute.</div>';
+  }
+  if(ts){
+    html+=section('Reviews & Social Proof','⭐',
+      chip('Reviews',ts.reviewApp,ts.hasReviews)+
+      chip('Structured Data','Schema.org',ts.hasStructuredData)+
+      chip('Meta Title','Meta Title',ts.hasMetaTitle)+
+      chip('Meta Description','Meta Desc',ts.hasMetaDesc)
+    );
+    html+=section('Email & Marketing','📧',
+      chip('Email',ts.emailTool,ts.hasEmailCapture,'#8b5cf6')+
+      chip('Google Analytics','GA / GTM',ts.hasGA,'#3b82f6')+
+      chip('Facebook Pixel','FB Pixel',ts.hasFBPixel,'#3b82f6')+
+      chip('TikTok Pixel','TikTok Pixel',ts.hasTikTokPixel,'#3b82f6')
+    );
+    html+=section('Conversion & Trust','💳',
+      chip('BNPL',ts.bnplTool,ts.hasAfterPay,'var(--cyan)')+
+      chip('Live Chat',ts.chatTool,ts.hasLiveChat,'var(--yellow)')+
+      chip('Loyalty',ts.loyaltyTool,ts.hasLoyalty,'var(--orange)')+
+      chip('Wishlist','Wishlist',ts.hasWishlist)+
+      chip('Quick View','Quick View',ts.hasQuickView)+
+      chip('Announcement Bar','Announcement Bar',ts.hasAnnouncementBar)
+    );
+    html+=section('Social Channels','🌐',
+      Object.entries(ts.social).map(([k,v])=>chip(k,k.charAt(0).toUpperCase()+k.slice(1),v)).join('')
+    );
+    if(ts.metaTitle){
+      html+='<div style="margin-top:8px;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--bord)"><div style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Detected Meta Title</div><div style="font-size:.82rem;color:var(--txt)">'+ts.metaTitle+'</div></div>';
+    }
+    if(ts.metaDesc){
+      html+='<div style="margin-top:8px;padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:8px;border:1px solid var(--bord)"><div style="font-size:.7rem;font-weight:700;color:var(--muted);text-transform:uppercase;margin-bottom:4px">Detected Meta Description</div><div style="font-size:.82rem;color:var(--txt)">'+ts.metaDesc+'</div></div>';
+    }
+    html+='<div style="font-size:.72rem;color:var(--muted);margin-top:12px;padding:8px 12px;background:rgba(59,130,246,0.06);border-radius:8px;border-left:2px solid var(--blue)">📡 Data source: <strong>allorigins.win proxy → live homepage HTML scrape</strong> of '+url+'</div>';
+  }else{
+    html+='<div style="color:var(--muted);font-size:.82rem;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px">⚠️ Homepage analysis unavailable — CORS proxy may be busy. Core catalog audit is unaffected.</div>';
+  }
+  g('tsinner').innerHTML=html;
+}
+function exportReport(){
+  const data={exportedAt:new Date().toISOString(),store:pd&&pd.url,opportunities:ao};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='cro-audit-'+new Date().toISOString().split('T')[0]+'.json';a.click();
+}
+async function go(){
+  he();
+  const pi=g('primaryUrl').value.trim(),ci2=g('compUrl').value.trim(),depth=parseInt(g('auditDepth').value);
+  if(!pi){se('Please enter a Shopify store URL.');return;}
+  const po=nu(pi);if(!po){se('Invalid URL. Try: gymshark.com');return;}
+  let co=null;if(ce&&ci2){co=nu(ci2);if(!co){se('Invalid competitor URL.');return;}}
+  const btn=g('runBtn');btn.disabled=true;
+  g('bi').innerHTML='<span class="spin">⟳</span>';g('bt').textContent='Auditing...';
+  g('prog').classList.add('vis');g('results').classList.remove('vis');g('results').style.display='none';
+  g('pl').innerHTML='';
+  try{
+    lg('Connecting to '+po+'...','info');sp(5,'Fetching product catalog...');await sl(300);
+    pd=await fsd(po,depth);
+    if(!pd.products.length){let msg='Could not fetch products from '+po+'. ';if(pd.errors.length)msg+='('+pd.errors[0]+') ';msg+='Ensure this is a public Shopify store.';throw new Error(msg);}
+    lg('Fetched '+pd.products.length+' products','ok');
+    lg('Fetched '+pd.collections.length+' collections','ok');
+    sp(30,'Analyzing catalog...');await sl(200);
+    const pm=ast(pd);if(!pm)throw new Error('Could not analyze store data.');
+    lg('Avg price: '+(pm.currency||'')+' '+Math.round(pm.avgPrice).toLocaleString(),'');
+    lg('OOS products: '+pm.oosProducts,'');
+    lg('Products with fewer than 3 images: '+pm.productsWithFewImages,'');
+    sp(50,'Generating CRO opportunities...');await sl(200);
+    const opps=gen(pm);lg('Found '+opps.length+' CRO opportunities','ok');
+    sp(65,'ICE scoring and ranking...');await sl(200);
+    lg('Top opportunity: '+opps[0]?.title+' (ICE: '+opps[0]?.ice+')','ok');
+    sp(75,'Generating experiment briefs...');await sl(200);
+    let cm=null;
+    if(co){lg('Fetching competitor: '+co+'...','info');sp(80,'Fetching competitor catalog...');const cd=await fsd(co,100);if(cd.products.length){cm=ast(cd);lg('Competitor: '+cd.products.length+' products fetched','ok');}else lg('Could not fetch competitor data — may not be public Shopify','warn');}
+    sp(90,'Rendering results...');await sl(300);
+    g('results').style.display='block';setTimeout(()=>g('results').classList.add('vis'),50);
+    ro(pm,po);rc(pm);rot(opps);rb(opps);
+    if(cm&&co)rcomp(pm,cm,po,co);else g('compsec').style.display='none';
+    sp(92,'Fetching PageSpeed and tech stack data...');
+    lg('Fetching Google PageSpeed Insights (mobile)...','info');
+    const [psData,tsData]=await Promise.all([fetchPageSpeed(po),fetchTechStack(po)]);
+    if(psData){lg('PageSpeed mobile score: '+psData.score+'/100 (LCP: '+psData.lcp+')','ok');}else lg('PageSpeed unavailable (rate limited or timeout)','warn');
+    if(tsData){
+      const apps=[tsData.reviewApp!='None detected'?'Reviews: '+tsData.reviewApp:'',tsData.chatTool!='None'?'Chat: '+tsData.chatTool:'',tsData.emailTool?'Email: '+tsData.emailTool:''].filter(Boolean);
+      lg('Tech stack: '+( apps.length?apps.join(', '):'No major apps detected'),'ok');
+    }else lg('Homepage analysis unavailable','warn');
+    if(tsData&&pm){
+      pm.hasReviews=tsData.hasReviews;pm.reviewApp=tsData.reviewApp;
+      pm.hasEmailCapture=tsData.hasEmailCapture;pm.hasLiveChat=tsData.hasLiveChat;
+      pm.hasAfterPay=tsData.hasAfterPay;pm.bnplTool=tsData.bnplTool;
+      pm.hasLoyalty=tsData.hasLoyalty;pm.pageSpeedScore=psData?psData.score:null;
+    }
+    renderTechStack(tsData,psData,po);
+    if(cm&&co&&tsData){
+      const [cTsData,cPsData]=await Promise.all([fetchTechStack(co),fetchPageSpeed(co)]);
+      if(cTsData&&cm){
+        cm.hasReviews=cTsData.hasReviews;cm.hasEmailCapture=cTsData.hasEmailCapture;
+        cm.hasLiveChat=cTsData.hasLiveChat;cm.hasAfterPay=cTsData.hasAfterPay;
+        cm.pageSpeedScore=cPsData?cPsData.score:null;
+      }
+      rcomp(pm,cm,po,co);
+    }
+    sp(100,'Audit complete! 🎉');lg('Audit complete! '+opps.length+' opportunities ranked.','ok');
+    setTimeout(()=>g('ovs').scrollIntoView({behavior:'smooth',block:'start'}),400);
+  }catch(e){lg('Error: '+e.message,'err');se(e.message);sp(0,'Audit failed');}
+  finally{btn.disabled=false;g('bi').textContent='⚡';g('bt').textContent='Run CRO Audit';}
+}
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&!g('runBtn').disabled){const a=document.activeElement;if(a&&(a.id==='primaryUrl'||a.id==='compUrl'))go();}});
+
+
+</script>
+</body>
+</html>
