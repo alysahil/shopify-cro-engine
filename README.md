@@ -2,6 +2,7 @@
 
 A premium, macOS-inspired single-page web application that performs real-time conversion rate optimization (CRO) audits on public Shopify storefronts.
 
+🔗 **Live Application**: [shopify-cro-engine.vercel.app](https://shopify-cro-engine.vercel.app/)
 🔗 **GitHub Repository**: [github.com/alysahil/shopify-cro-engine](https://github.com/alysahil/shopify-cro-engine)
 
 ---
